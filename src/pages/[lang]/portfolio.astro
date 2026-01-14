@@ -1,0 +1,301 @@
+---
+import Layout from '../../layouts/Layout.astro'; // Pozor na cestu ../..
+import Gallery from '../../components/Gallery.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+// TOTO PŘIDAT DO KAŽDÉHO SOUBORU:
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'cs' } },
+  ];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+
+const images = [
+  { src: "/assets/images/DSC02425-Enhanced-NR.webp", alt: "Night Drift Fire", category: "Adrenaline" },
+  { src: "/assets/images/DSC02483-Enhanced-NR.webp", alt: "Supra Fire Run", category: "Adrenaline" },
+  { src: "/assets/images/DSC02586-Enhanced-NR.webp", alt: "Tandem Fire Action", category: "Adrenaline" },
+  { src: "/assets/images/DSC02479-Enhanced-NR.webp", alt: "Supra Side Fire", category: "Adrenaline" },
+  { src: "/assets/images/DSC03816.webp", alt: "DJ Event Performance", category: "Adrenaline" }, 
+  { src: "/assets/images/DSC03785.webp", alt: "Pioneer DJ Gear", category: "Adrenaline" },
+  { src: "/assets/images/DSC00932.webp", alt: "Moto Wheelie Stunt", category: "Adrenaline" },
+  { src: "/assets/images/DSC01034.webp", alt: "Moto Standing Stunt", category: "Adrenaline" },
+  { src: "/assets/images/DSC02956.webp", alt: "Purple Silvia Smoke", category: "Adrenaline" },
+  { src: "/assets/images/DSC02861.webp", alt: "Pink BMW Panning", category: "Adrenaline" },
+  { src: "/assets/images/DSC03166.webp", alt: "Green Black Tandem", category: "Adrenaline" },
+  { src: "/assets/images/DSC02835.webp", alt: "BMW Smoke Trail", category: "Adrenaline" },
+  { src: "/assets/images/DSC02830.webp", alt: "White Hatch Drift", category: "Adrenaline" },
+  { src: "/assets/images/DSC03186.webp", alt: "Black Red Tandem", category: "Adrenaline" },
+  { src: "/assets/images/DSC04135.webp", alt: "Porsche GT3 RS Matte", category: "Automotive" },
+  { src: "/assets/images/DSC04166.webp", alt: "Honda Engine Bay", category: "Automotive" },
+  { src: "/assets/images/DSC04157.webp", alt: "Car Audio Setup", category: "Automotive" },
+  { src: "/assets/images/DSC00621.webp", alt: "Challenger Wheel SRT", category: "Automotive" },
+  { src: "/assets/images/DSC03781.webp", alt: "Challenger Industrial Ruins", category: "Automotive" },
+  { src: "/assets/images/DSC00640.webp", alt: "Challenger Rooftop Rear", category: "Automotive" },
+  { src: "/assets/images/DSC00623.webp", alt: "Challenger Rooftop Front", category: "Automotive" },
+  { src: "/assets/images/DSC03912.webp", alt: "Civic Night Run", category: "Automotive" },
+  { src: "/assets/images/DSC03627.webp", alt: "Challenger Low Angle", category: "Automotive" },
+  { src: "/assets/images/DSC03124.webp", alt: "BMW Red Pandem Front", category: "Automotive" },
+  { src: "/assets/images/DSC03117.webp", alt: "BMW Red Pandem Rear", category: "Automotive" },
+  { src: "/assets/images/DSC03126.webp", alt: "BMW Red Pandem Detail", category: "Automotive" },
+  { src: "/assets/images/DSC03931-Enhanced-NR.webp", alt: "Porsche 944 Retro", category: "Automotive" },
+  { src: "/assets/images/DSC03564.webp", alt: "Challenger Headlight", category: "Automotive" },
+  { src: "/assets/images/DSC03632.webp", alt: "Challenger Sunset Front", category: "Automotive" },
+  { src: "/assets/images/DSC03559.webp", alt: "Challenger Moody Front", category: "Automotive" },
+  { src: "/assets/images/DSC03797.webp", alt: "Challenger Sunset Rear", category: "Automotive" },
+  { src: "/assets/images/DSC04000-Enhanced-NR.webp", alt: "Skoda Night Gas Station", category: "Automotive" },
+  { src: "/assets/images/DSC02173.webp", alt: "Challenger Rolling Forest", category: "Automotive" },
+  { src: "/assets/images/DSC02762.webp", alt: "Challenger Autumn Rear", category: "Automotive" },
+  { src: "/assets/images/DSC02617.webp", alt: "Challenger Autumn Front", category: "Automotive" },
+  { src: "/assets/images/DSC02760.webp", alt: "Challenger Autumn Road", category: "Automotive" },
+  { src: "/assets/images/DSC02624.webp", alt: "Challenger Vertical Autumn", category: "Automotive" },
+  { src: "/assets/images/DSC03951-Enhanced-NR.webp", alt: "Civic Glass Building", category: "Automotive" },
+  { src: "/assets/images/DSC01532.webp", alt: "Wedding First Kiss", category: "Weddings" },
+  { src: "/assets/images/DSC01703.webp", alt: "Wedding Bubbles Exit", category: "Weddings" },
+  { src: "/assets/images/DSC01744.webp", alt: "Wedding Walk Golden Hour", category: "Weddings" },
+  { src: "/assets/images/DSC01515.webp", alt: "Groom & Flowers", category: "Weddings" },
+  { src: "/assets/images/svatba.webp", alt: "Wedding Ring Detail", category: "Weddings" },
+  { src: "/assets/images/DSC02016.webp", alt: "Hotel Marlene Venue", category: "Weddings" },
+];
+
+const categories = ["All", ...new Set(images.map((img) => img.category))];
+
+const categoryLabels: Record<string, string> = {
+  "All": t('portfolio.cat_all'),
+  "Adrenaline": t('portfolio.cat_adr'),
+  "Automotive": t('portfolio.cat_auto'),
+  "Weddings": t('portfolio.cat_wed')
+};
+---
+
+<Layout title="Portfolio | Roman Wantulok">
+  
+  <section class="pt-32 pb-12 px-4 text-center bg-obsidian">
+    <h1 class="text-4xl md:text-6xl font-serif text-platinum mb-4">
+      {t('portfolio.title')} <span class="text-gold italic">{t('portfolio.title_span')}</span>
+    </h1>
+    <p class="text-platinum/60 max-w-xl mx-auto text-sm md:text-base tracking-wide">
+      {t('portfolio.desc')}
+    </p>
+  </section>
+
+  <section class="pb-20 px-4 md:px-8 bg-obsidian min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="flex flex-wrap justify-center gap-6 mb-16 sticky top-24 z-40 py-4 bg-obsidian/95 backdrop-blur-sm transition-all duration-300" id="filter-bar">
+        {categories.map((cat) => (
+          <button 
+            class="filter-btn text-xs md:text-sm uppercase tracking-[0.2em] text-platinum/50 hover:text-gold transition-all duration-300 pb-1 border-b border-transparent hover:border-gold"
+            data-filter={cat}
+          >
+            {categoryLabels[cat] || cat}
+          </button>
+        ))}
+      </div>
+  
+      <div id="gallery-grid" class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+        {images.map((img, index) => (
+          <div 
+            class="relative group overflow-hidden break-inside-avoid gallery-item cursor-none mb-6" 
+            data-index={index}
+            data-category={img.category}
+          >
+            
+            <img 
+              src={img.src} 
+              alt={img.alt}
+              loading="lazy"
+              decoding="async"
+              class="w-full h-auto object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
+              oncontextmenu="return false;"
+            />
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none"></div>
+
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+              <div class="text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <span class="text-gold text-xs uppercase tracking-widest border border-gold px-4 py-2">{t('portfolio.view')}</span>
+              </div>
+            </div>
+  
+          </div>
+        ))}
+      </div>
+  
+    </div>
+  </section>
+
+  <div id="lightbox" class="fixed inset-0 z-[-1] bg-obsidian/98 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center">
+    
+    <button id="lb-close" style="cursor: pointer;" class="lb-btn absolute top-6 right-6 text-platinum hover:text-gold z-[99999] p-4 pointer-events-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+
+    <div class="relative w-full h-full flex items-center justify-center p-4 md:p-10 pointer-events-none">
+        <img id="lb-img" src="" class="max-h-[85vh] max-w-full object-contain shadow-2xl transition-transform duration-500 scale-95 pointer-events-auto" />
+    </div>
+    
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-center w-full px-4 z-[99999] pointer-events-none">
+        <p id="lb-caption" class="text-platinum font-serif text-2xl italic"></p>
+        <p id="lb-cat" class="text-gold text-xs uppercase tracking-widest mt-2"></p>
+    </div>
+
+    <button id="lb-prev" style="cursor: pointer;" class="lb-btn absolute left-2 md:left-8 top-1/2 -translate-y-1/2 p-4 text-platinum hover:text-gold transition-colors z-[99999] pointer-events-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </button>
+    
+    <button id="lb-next" style="cursor: pointer;" class="lb-btn absolute right-2 md:right-8 top-1/2 -translate-y-1/2 p-4 text-platinum hover:text-gold transition-colors z-[99999] pointer-events-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+    </button>
+  </div>
+
+</Layout>
+
+<script define:vars={{ images }}>
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const galleryItems = document.querySelectorAll('.gallery-item');
+
+  function setActiveBtn(clickedBtn) {
+    filterBtns.forEach(btn => {
+      btn.classList.remove('text-gold', 'border-gold', 'opacity-100');
+      btn.classList.add('text-platinum/50');
+    });
+    clickedBtn.classList.remove('text-platinum/50');
+    clickedBtn.classList.add('text-gold', 'border-gold', 'opacity-100');
+  }
+
+  if(filterBtns.length > 0) setActiveBtn(filterBtns[0]);
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.getAttribute('data-filter');
+      setActiveBtn(btn);
+
+      galleryItems.forEach(item => {
+        const itemCat = item.getAttribute('data-category');
+        if (category === "All" || category === itemCat) {
+          item.classList.remove('hidden');
+          setTimeout(() => {
+            item.classList.remove('opacity-0', 'scale-95');
+            item.classList.add('opacity-100', 'scale-100');
+          }, 50);
+        } else {
+          item.classList.add('opacity-0', 'scale-95');
+          item.classList.remove('opacity-100', 'scale-100');
+          setTimeout(() => item.classList.add('hidden'), 300);
+        }
+      });
+    });
+  });
+
+  // --- LIGHTBOX ---
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const lbCaption = document.getElementById('lb-caption');
+  const lbCat = document.getElementById('lb-cat');
+  let currentIndex = 0;
+
+  function openLightbox(index) {
+      currentIndex = index;
+      updateContent();
+      lightbox.classList.remove('opacity-0', 'pointer-events-none', 'z-[-1]');
+      lightbox.classList.add('z-[11000]');
+      setTimeout(() => lbImg.classList.remove('scale-95'), 50); 
+  }
+
+  function closeLightbox() {
+      lightbox.classList.add('opacity-0', 'pointer-events-none');
+      lbImg.classList.add('scale-95');
+      setTimeout(() => {
+            lightbox.classList.remove('z-[11000]');
+            lightbox.classList.add('z-[-1]');
+      }, 300);
+  }
+
+  function updateContent() {
+      const data = images[currentIndex];
+      lbImg.style.opacity = '0.5';
+      setTimeout(() => {
+          lbImg.src = data.src;
+          lbCaption.innerText = data.alt;
+          lbCat.innerText = data.category;
+          lbImg.style.opacity = '1';
+      }, 150);
+  }
+
+  function nextImage(e) {
+      e?.stopPropagation();
+      currentIndex = (currentIndex + 1) % images.length;
+      updateContent();
+  }
+  
+  function prevImage(e) {
+      e?.stopPropagation();
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      updateContent();
+  }
+
+  galleryItems.forEach((item) => {
+      item.addEventListener('click', () => {
+          const index = parseInt(item.getAttribute('data-index'));
+          openLightbox(index);
+      });
+  });
+  document.getElementById('lb-close').addEventListener('click', closeLightbox);
+  document.getElementById('lb-next').addEventListener('click', nextImage);
+  document.getElementById('lb-prev').addEventListener('click', prevImage);
+  
+  lightbox.addEventListener('click', (e) => {
+      if(e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+      if (lightbox.classList.contains('opacity-0')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+  });
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const filterParam = urlParams.get('filter');
+
+  let initialBtn = null;
+  if (filterParam) {
+      initialBtn = document.querySelector(`.filter-btn[data-filter="${filterParam}"]`);
+  }
+
+  if (!initialBtn && filterBtns.length > 0) {
+      initialBtn = filterBtns[0];
+  }
+
+  if (initialBtn) {
+      setTimeout(() => {
+          initialBtn.click();
+      }, 50);
+  }
+</script>
+
+<style is:global>
+  .lb-btn svg,
+  .lb-btn svg *,
+  .lb-btn path {
+      pointer-events: none !important;
+  }
+  
+  .lb-btn {
+      pointer-events: auto !important;
+  }
+  
+  #custom-cursor,
+  #cursor-follower {
+      z-index: 99999 !important;
+  }
+</style>

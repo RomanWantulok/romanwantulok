@@ -1,0 +1,124 @@
+---
+import { getLangFromUrl, useTranslations, getLocalizedPath } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// 1. Odstraníme aktuální jazyk z URL, abychom dostali "čistou" cestu
+// Např. z "/cs/about" uděláme "/about"
+const currentPath = Astro.url.pathname.replace(new RegExp(`^/${lang}`), '') || '/';
+
+// 2. Vytvoříme odkazy pro přepínač
+// Pro EN chceme "/en/about", pro CS "/cs/about"
+const enPath = getLocalizedPath(currentPath, 'en');
+const csPath = getLocalizedPath(currentPath, 'cs');
+
+const links = [
+  { name: t('nav.portfolio'), href: getLocalizedPath('/portfolio', lang) },
+  { name: t('nav.services'), href: getLocalizedPath('/services', lang) },
+  { name: t('nav.about'), href: getLocalizedPath('/about', lang) },
+  { name: t('nav.collabs'), href: getLocalizedPath('/collabs', lang) },
+  { name: t('nav.journal'), href: getLocalizedPath('/journal', lang) },
+  { name: t('nav.contact'), href: getLocalizedPath('/contact', lang) },
+  { name: t('nav.faq'), href: getLocalizedPath('/faq', lang) },
+];
+---
+
+<header id="main-header" class="fixed top-0 w-full z-50 transition-all duration-500 border-b border-transparent">
+  <div class="max-w-[1500px] mx-auto px-6 h-20 flex items-center justify-between">
+    
+    <a href={getLocalizedPath('/', lang)} class="text-xl font-sans font-bold tracking-widest text-platinum uppercase z-50">
+      Roman <span class="text-gold">Wantulok</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-8">
+      {links.map((link) => (
+        <a 
+          href={link.href} 
+          class="text-xs font-sans uppercase tracking-widest text-platinum/80 hover:text-gold transition-colors duration-300"
+        >
+          {link.name}
+        </a>
+      ))}
+      
+      <a 
+        href={getLocalizedPath('/client-access', lang)} 
+        class="ml-4 px-5 py-2 border border-gold/50 text-gold text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-gold hover:text-black transition-all duration-300"
+      >
+        {t('nav.client')}
+      </a>
+
+      <div class="flex items-center gap-2 ml-4 text-[10px] font-sans uppercase tracking-widest border-l border-white/20 pl-6">
+        <a href={enPath} class={`lang-switch hover:text-gold transition-colors ${lang === 'en' ? 'text-gold font-bold' : 'text-platinum/50'}`} data-lang="en">EN</a>
+        <span class="text-platinum/20">|</span>
+        <a href={csPath} class={`lang-switch hover:text-gold transition-colors ${lang === 'cs' ? 'text-gold font-bold' : 'text-platinum/50'}`} data-lang="cs">CS</a>
+      </div>
+    </nav>
+
+    <button id="menu-btn" class="md:hidden text-platinum z-50 focus:outline-none group">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 group-hover:text-gold transition-colors">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+    </button>
+  </div>
+
+  <div id="mobile-menu" class="fixed inset-0 bg-obsidian flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-500">
+    {links.map((link) => (
+      <a href={link.href} class="text-2xl font-serif text-platinum hover:text-gold italic">
+        {link.name}
+      </a>
+    ))}
+    
+    <a href={getLocalizedPath('/client-access', lang)} class="mt-4 text-xl font-serif text-gold italic border-b border-gold/30 pb-1">
+        {t('nav.client')}
+    </a>
+
+    <div class="flex items-center gap-6 mt-8 text-sm font-sans uppercase tracking-[0.3em]">
+        <a href={enPath} class={`lang-switch py-4 ${lang === 'en' ? 'text-gold' : 'text-platinum/40'}`} data-lang="en">English</a>
+        <a href={csPath} class={`lang-switch py-4 ${lang === 'cs' ? 'text-gold' : 'text-platinum/40'}`} data-lang="cs">Česky</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('main-header');
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const langSwitches = document.querySelectorAll('.lang-switch');
+
+  // Scroll efekt
+  if (header) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('bg-obsidian/90', 'backdrop-blur-md', 'border-white/5');
+        } else {
+          header.classList.remove('bg-obsidian/90', 'backdrop-blur-md', 'border-white/5');
+        }
+      });
+  }
+
+  // Mobilní menu
+  if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('opacity-0');
+        mobileMenu.classList.toggle('pointer-events-none');
+        
+        // Změna barvy hlavičky při otevření menu, aby bylo logo vidět na černém
+        if (!mobileMenu.classList.contains('opacity-0')) {
+            header?.classList.add('bg-obsidian');
+        } else if (window.scrollY <= 50) {
+            header?.classList.remove('bg-obsidian');
+        }
+      });
+  }
+
+  // Uložení preference jazyka
+  langSwitches.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+          const lang = btn.getAttribute('data-lang');
+          if (lang) {
+              localStorage.setItem('preferred_lang', lang);
+          }
+      });
+  });
+</script>

@@ -1,0 +1,305 @@
+---
+// Import globálních stylů
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="cs">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Roman Wantulok - Visual Architect of Automotive Lifestyle" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+        <meta property="og:image" content="/assets/og-image.png" />
+         <meta property="twitter:image" content="/assets/og-image.png" />
+         <meta property="og:title" content="Roman Wantulok | Visual Architect" />
+         <meta property="og:description" content="Automotive & Lifestyle Photographer based in Czechia." />
+		
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+		
+		<title>{title}</title>
+	</head>
+	<body class="bg-obsidian text-platinum antialiased cursor-none selection:bg-gold selection:text-obsidian flex flex-col min-h-screen">
+		
+		<div id="custom-cursor" class="fixed top-0 left-0 w-4 h-4 bg-gold rounded-full pointer-events-none z-[9999] mix-blend-difference transition-transform duration-100 ease-out translate-x-[-50%] translate-y-[-50%] hidden md:block"></div>
+		<div id="cursor-follower" class="fixed top-0 left-0 w-10 h-10 border border-white/20 rounded-full pointer-events-none z-[9998] transition-transform duration-300 ease-out translate-x-[-50%] translate-y-[-50%] hidden md:block"></div>
+
+        <div id="preloader" class="fixed inset-0 z-[9000] bg-obsidian flex flex-col items-center justify-center transition-opacity duration-1000 ease-out">
+            <div class="overflow-hidden mb-3">
+                <img 
+                    id="loader-logo" 
+                    src="/assets/images/logo.svg"
+                    alt="Roman Wantulok Logo" 
+                    class="w-56 md:w-80 h-auto translate-y-10 opacity-0 transition-all duration-[2000ms] ease-out"
+                    onerror="this.src='https://placehold.co/400x100/0A0A0A/E6E6E6?text=ROMAN+WANTULOK';this.onerror=null;" 
+                />
+            </div>
+
+            <div id="global-toast-container" class="fixed top-24 right-6 z-[999999] flex flex-col gap-4 pointer-events-none"></div>
+
+            <div 
+                id="loader-line-wrapper"
+                class="w-40 md:w-56 h-[2px] bg-carbon/50 relative overflow-hidden rounded-full opacity-0 transition-opacity duration-1000 ease-out -ml-6 md:-ml-10"
+            >
+                <div id="loader-bar" class="absolute top-0 left-0 h-full bg-gold w-0 rounded-full shadow-[0_0_10px_rgba(197,160,89,0.5)]"></div>
+            </div>
+        </div>
+
+        <Navbar />
+
+        <main class="flex-grow">
+		    <slot />
+        </main>
+
+        <Footer />
+<script is:inline>
+    // --- GLOBÁLNÍ TOAST FUNKCE ---
+    window.showToast = function(message, type = 'success') {
+        const container = document.getElementById('global-toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        // Design: Zlatá pro úspěch, Červená pro chybu
+        toast.className = `
+            flex items-center gap-3 px-6 py-4 rounded shadow-2xl border backdrop-blur-md transform transition-all duration-500 translate-x-20 opacity-0
+            ${type === 'success' ? 'bg-black/90 border-gold/30 text-gold' : 'bg-red-950/90 border-red-500/30 text-red-200'}
+        `;
+        
+        toast.innerHTML = `
+            <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-widest opacity-50">${type === 'success' ? 'Success' : 'Alert'}</span>
+                <span class="text-sm font-bold">${message}</span>
+            </div>
+        `;
+
+        container.appendChild(toast);
+
+        // Animace příjezdu
+        requestAnimationFrame(() => {
+            toast.classList.remove('translate-x-20', 'opacity-0');
+        });
+
+        // Zmizení po 4 sekundách
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-x-20');
+            setTimeout(() => toast.remove(), 500);
+        }, 4000);
+    };
+
+    // --- GLOBÁLNÍ SLEDOVÁNÍ INTERNETU ---
+    window.addEventListener('offline', () => window.showToast("Connection Lost", "error"));
+    window.addEventListener('online', () => window.showToast("Back Online", "success"));
+</script>
+
+<script>
+    
+    import Lenis from '@studio-freight/lenis'
+
+    // --- RESET POZICE ---
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
+    // --- LENIS SCROLL ---
+    const lenis = new Lenis({
+        duration: 1.0,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+    } as any);
+
+    function raf(time: number) {
+        lenis.raf(time)
+        requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
+
+    // --- ANTI-THEFT ---
+    document.addEventListener('contextmenu', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'IMG') e.preventDefault();
+    });
+    document.addEventListener('dragstart', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'IMG') e.preventDefault();
+    });
+
+    // --- KURZOR ---
+    const cursor = document.getElementById('custom-cursor');
+    const follower = document.getElementById('cursor-follower');
+
+    document.addEventListener('mousemove', (e) => {
+        if (cursor) {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        }
+        if (follower) {
+            follower.style.left = e.clientX + 'px';
+            follower.style.top = e.clientY + 'px';
+        }
+    });
+
+    const links = document.querySelectorAll('a, button, .group');
+    links.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            cursor?.classList.add('scale-0'); 
+            follower?.classList.add('scale-[1.5]', 'bg-gold/10', 'border-gold');
+        });
+        link.addEventListener('mouseleave', () => {
+            cursor?.classList.remove('scale-0');
+            follower?.classList.remove('scale-[1.5]', 'bg-gold/10', 'border-gold');
+        });
+    });
+
+    const preloader = document.getElementById('preloader');
+    const loaderLogo = document.getElementById('loader-logo'); 
+    const loaderBar = document.getElementById('loader-bar');
+    const loaderLineWrapper = document.getElementById('loader-line-wrapper');
+
+    // 1. Zjistíme správně, jestli jsme na HLAVNÍ STRÁNCE
+    const path = window.location.pathname;
+    const isHomePage = path === '/' || /^\/(en|cs)\/?$/.test(path);
+
+    // DŮLEŽITÉ: Okamžitě resetujeme na 0%, aby to startovalo zleva
+    if (loaderBar) {
+        loaderBar.style.width = "0%";
+        loaderBar.style.transition = "none"; // Vypneme animaci pro reset
+    }
+
+    if (isHomePage) {
+        // ==========================================
+        // REŽIM 1: HOMEPAGE (SLOŽITÉ INTRO)
+        // ==========================================
+        
+        const MIN_TIME = 2200; 
+        const startTime = Date.now();
+
+        // 1. Logo animace
+        setTimeout(() => {
+            if(loaderLogo) loaderLogo.classList.remove('translate-y-10', 'opacity-0');
+        }, 10);
+
+        // 2. START ČÁRY (S malým zpožděním, aby byla vidět jízda od 0%)
+        setTimeout(() => {
+            if (loaderBar) {
+                // Zapneme plynulou animaci
+                loaderBar.style.transition = "width 5s cubic-bezier(0.2, 0, 0, 1)";
+                // A pošleme ji na 85%
+                loaderBar.style.width = "0%";
+            }
+        }, 100); // 100ms zpoždění zajistí, že startuje z nuly
+
+        // 3. Dokončovací funkce
+        const finishHomeAnimation = () => {
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, MIN_TIME - elapsed);
+
+            setTimeout(() => {
+                if(loaderLineWrapper) loaderLineWrapper.classList.remove('opacity-0');
+
+                if (loaderBar) {
+                    // Rychlý dojezd do 100%
+                    loaderBar.style.transition = "width 0.5s ease-out";
+                    loaderBar.style.width = "100%";
+                }
+
+                // Odstranění opony
+                setTimeout(() => {
+                    if(preloader) {
+                        preloader.style.transition = "opacity 0.8s ease-out";
+                        preloader.classList.add('opacity-0', 'pointer-events-none');
+                        document.body.classList.add('page-loaded');
+                        setTimeout(() => preloader.remove(), 1100);
+                    }
+                }, 600);
+            }, remaining);
+        };
+
+        if (document.readyState === 'complete') {
+            finishHomeAnimation();
+        } else {
+            window.addEventListener('load', finishHomeAnimation);
+        }
+
+    } else {
+        // ==========================================
+        // REŽIM 2: PODSTRÁNKY (RYCHLÝ LOADING)
+        // ==========================================
+        
+        if(loaderLogo) loaderLogo.classList.remove('translate-y-10', 'opacity-0');
+        if(loaderLineWrapper) loaderLineWrapper.classList.remove('opacity-0');
+
+        // Start čáry i na podstránkách od 0%
+        setTimeout(() => {
+            if(loaderBar) {
+                loaderBar.style.transition = "width 3s cubic-bezier(0.2, 0, 0, 1)";
+                loaderBar.style.width = "90%";
+            }
+        }, 50);
+
+        const finishSubpageAnimation = () => {
+            if (!loaderBar) return;
+            
+            loaderBar.style.transition = "width 0.3s ease-out";
+            loaderBar.style.width = "100%";
+
+            setTimeout(() => {
+                if(preloader) {
+                    preloader.style.transition = "opacity 0.4s ease-out";
+                    preloader.classList.add('opacity-0', 'pointer-events-none');
+                    document.body.classList.add('page-loaded');
+                    setTimeout(() => preloader.remove(), 400);
+                }
+            }, 200);
+        };
+
+        if (document.readyState === 'complete') {
+            finishSubpageAnimation();
+        } else {
+            window.addEventListener('load', finishSubpageAnimation);
+        }
+    }
+</script>
+	</body>
+</html>
+
+<style is:global>
+  html {
+      /* Toto skryje posuvník ve Firefoxu, ale nezabije sticky */
+      scrollbar-width: none; 
+  }
+  
+  body {
+      width: 100%;
+      min-height: 100vh;
+      background-color: #000;
+      
+      /* 1. ZMĚNA: Místo 'hidden' použijeme 'clip' (moderní fix) */
+      /* Pokud to prohlížeč neumí, raději ať tam posuvník je, než aby nefungoval web */
+      overflow-x: clip; 
+  }
+
+  /* Skrytí posuvníku pro Chrome/Safari/Edge */
+  body::-webkit-scrollbar {
+      display: none; /* Toto je bezpečnější než width: 0 */
+  }
+  
+  /* Pojistka: Ujisti se, že MAIN nemá overflow */
+  main {
+      overflow: visible !important;
+  }
+</style>

@@ -1,0 +1,230 @@
+---
+import Layout from '../../layouts/Layout.astro'; // Pozor na cestu ../..
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+// TOTO PŘIDAT DO KAŽDÉHO SOUBORU:
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'cs' } },
+  ];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout title="Contact | Roman Wantulok">
+
+  <section class="min-h-screen flex flex-col md:flex-row bg-obsidian">
+    
+    <div class="w-full md:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-20 pt-32 pb-20 relative z-10 order-2 md:order-1">
+      
+      <div class="max-w-xl mx-auto md:mx-0">
+        
+        <p class="text-gold text-xs uppercase tracking-[0.4em] mb-4 opacity-0 animate-fade-up" style="animation-delay: 0.1s;">{t('contact.start')}</p>
+        
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-serif text-white mb-8 leading-tight">
+          <div class="overflow-hidden">
+            <span class="block reveal-text" style="animation-delay: 0.2s;">{t('contact.create')}</span>
+          </div>
+          <div class="overflow-hidden">
+            <span class="block reveal-breathing-gold italic text-platinum/50" style="animation-delay: 0.4s;">{t('contact.timeless')}</span>
+          </div>
+        </h1>
+        
+        <p class="text-platinum/60 text-sm font-light leading-relaxed mb-12 opacity-0 animate-fade-up" style="animation-delay: 0.5s;" set:html={t('contact.desc')}>
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-8 mb-16 text-sm opacity-0 animate-fade-up" style="animation-delay: 0.6s;">
+            <div>
+                <span class="text-xs text-gold uppercase tracking-widest block mb-2">{t('contact.email')}</span>
+                <a href="mailto:info@romanwantulok.com" class="text-white hover:text-gold transition-colors border-b border-white/20 pb-1 hover:border-gold">info@romanwantulok.com</a>
+            </div>
+            
+            <div>
+                <span class="text-xs text-gold uppercase tracking-widest block mb-2">{t('contact.socials')}</span>
+                <div class="flex gap-4">
+                    <a href="https://instagram.com/rwvisualss" target="_blank" rel="noopener noreferrer" class="text-white hover:text-gold transition-colors border-b border-white/20 pb-1 hover:border-gold">Instagram</a>
+                </div>
+            </div>
+        </div>
+
+        <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-8 opacity-0 animate-fade-up" style="animation-delay: 0.7s;">
+            
+            <input type="hidden" name="access_key" value="20a170e9-5b3d-490f-9534-d0832b81c259">
+            <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div class="group">
+                    <input type="text" name="name" placeholder={t('contact.form_name')} required 
+                           class="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-platinum/30 focus:outline-none focus:border-gold focus:shadow-[0_10px_20px_-10px_rgba(197,160,89,0.2)] transition-all duration-300" />
+                </div>
+                <div class="group">
+                   <input type="email" name="email" placeholder={t('contact.form_email')} required 
+                           class="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-platinum/30 focus:outline-none focus:border-gold focus:shadow-[0_10px_20px_-10px_rgba(197,160,89,0.2)] transition-all duration-300" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div class="group relative">
+                    <select name="category" required class="w-full bg-transparent border-b border-white/20 py-4 text-white appearance-none focus:outline-none focus:border-gold focus:shadow-[0_10px_20px_-10px_rgba(197,160,89,0.2)] transition-all duration-300 cursor-pointer">
+                        <option value="" disabled selected class="bg-obsidian text-platinum/50">{t('contact.form_cat')}</option>
+                        <option value="automotive" class="bg-obsidian text-white">{t('contact.cat_auto')}</option>
+                        <option value="wedding" class="bg-obsidian text-white">{t('contact.cat_wedding')}</option>
+                        <option value="event" class="bg-obsidian text-white">{t('contact.cat_event')}</option>
+                        <option value="event" class="bg-obsidian text-white">{t('contact.cat_other')}</option>
+                    </select>
+                    <div class="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-gold/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="group">
+                   <input type="text" name="date" placeholder={t('contact.form_date')} 
+                           class="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-platinum/30 focus:outline-none focus:border-gold focus:shadow-[0_10px_20px_-10px_rgba(197,160,89,0.2)] transition-all duration-300" />
+                </div>
+            </div>
+
+            <div class="group">
+                <textarea name="message" rows="4" placeholder={t('contact.form_msg')} required
+                          class="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-platinum/30 focus:outline-none focus:border-gold focus:shadow-[0_10px_20px_-10px_rgba(197,160,89,0.2)] transition-all duration-300 resize-none"></textarea>
+            </div>
+
+            <div class="pt-8 flex flex-col md:flex-row items-center gap-6">
+                
+                <button type="submit" id="submit-btn" class="w-full md:w-auto group relative inline-flex items-center justify-center gap-4 px-12 py-4 border border-gold text-gold text-xs font-bold uppercase tracking-[0.2em] hover:bg-gold hover:text-black hover:shadow-[0_0_20px_rgba(197,160,89,0.4)] transition-all duration-300">
+                    <span id="btn-text">{t('contact.btn')}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                    </svg>
+                </button>
+
+                <span class="text-white/20 text-[10px] uppercase tracking-widest hidden md:block">{t('contact.or')}</span>
+
+                <a href="https://wa.me/420732214018" target="_blank" rel="noopener noreferrer" 
+                   class="w-full md:w-auto group flex items-center justify-center gap-4 px-8 py-4 border border-green/10 text-white/60 text-xs font-bold uppercase tracking-[0.2em] hover:text-white hover:border-green/30 hover:bg-white/5 transition-all duration-300">
+                    
+                    <svg class="w-4 h-4 fill-current transition-colors duration-300 group-hover:fill-[#25D366]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                    </svg>
+                    <span>{t('contact.whatsapp')}</span>
+                </a>
+
+            </div>
+            
+            <p id="form-result" class="hidden text-gold text-xs uppercase tracking-widest mt-4 animate-fade-in"></p>
+
+        </form>
+
+      </div>
+    </div>
+
+    <div class="w-full md:w-1/2 relative order-1 md:order-2 h-[40vh] md:h-auto md:min-h-screen">
+        <div class="absolute inset-0 bg-black/20 z-10"></div>
+        <div class="sticky top-0 h-full w-full">
+            <img src="/assets/images/DSC04135.webp" 
+                 alt="Contact Atmosphere" 
+                 class="w-full h-full object-cover object-top opacity-80 animate-fade-in-slow" />
+        </div>
+    </div>
+
+  </section>
+
+</Layout>
+
+<script is:inline>
+const form = document.getElementById('contact-form');
+const result = document.getElementById('form-result');
+const btnText = document.getElementById('btn-text');
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  btnText.innerText = "Sending...";
+
+  const formData = new FormData(form);
+  const object = Object.fromEntries(formData);
+  const json = JSON.stringify(object);
+
+  fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+          },
+          body: json
+      })
+      .then(async (response) => {
+          let res = await response.json();
+          if (response.status == 200) {
+              result.innerHTML = "Message sent successfully. I will get back to you soon.";
+              result.classList.remove('hidden');
+              form.reset();
+              btnText.innerText = "Sent";
+          } else {
+              result.innerHTML = "Something went wrong. Please try again.";
+              result.classList.remove('hidden');
+              btnText.innerText = "Error";
+          }
+      })
+      .catch(error => {
+          result.innerHTML = "Something went wrong!";
+          result.classList.remove('hidden');
+          btnText.innerText = "Error";
+      });
+});
+</script>
+
+<style>
+  /* ZÁKLADNÍ FADE ANIMACE */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 0.8; }
+  }
+
+  /* EDITORIAL REVEAL (Vyjetí textu) */
+  @keyframes revealUp {
+    from { transform: translateY(110%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* NOVÉ PULZOVÁNÍ (Barva se mění na zlatou) */
+  @keyframes breathingGold {
+    0%, 100% {
+      color: rgba(226, 226, 226, 0.5);
+      text-shadow: none;
+    }
+    50% {
+      color: #C5A059;
+      text-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
+    }
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+  
+  .animate-fade-in-slow {
+      animation: fadeIn 1.5s ease-out forwards;
+  }
+
+  .reveal-text {
+    opacity: 0;
+    transform: translateY(110%);
+    animation: revealUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .reveal-breathing-gold {
+    opacity: 0;
+    transform: translateY(110%);
+    animation: 
+        revealUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+        breathingGold 5s ease-in-out infinite 1.2s;
+  }
+</style>

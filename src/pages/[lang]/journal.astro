@@ -1,0 +1,116 @@
+---
+import Layout from '../../layouts/Layout.astro'; // Pozor na cestu ../..
+import Gallery from '../../components/Gallery.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+// TOTO PŘIDAT DO KAŽDÉHO SOUBORU:
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'cs' } },
+  ];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout title="Blog | Roman Wantulok">
+
+  <section class="min-h-screen w-full bg-obsidian flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+    
+    <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+        <div class="absolute top-[-20%] left-[-20%] w-[800px] h-[800px] bg-gold/5 blur-[150px] rounded-full animate-pulse-slow"></div>
+        <div class="absolute bottom-[-20%] right-[-20%] w-[600px] h-[600px] bg-white/5 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto">
+        
+        <p class="text-gold text-xs uppercase tracking-[0.4em] mb-8 opacity-0 animate-fade-up" style="animation-delay: 0.1s;">
+            {t('journal.sub')}
+        </p>
+        
+        <h1 class="font-serif text-6xl md:text-8xl lg:text-9xl text-white mb-12 leading-tight">
+            <div class="overflow-hidden">
+                <span class="block reveal-text" style="animation-delay: 0.2s;">{t('journal.title')}</span>
+            </div>
+            <div class="overflow-hidden">
+                <span class="block reveal-breathing-gold italic text-platinum/50" style="animation-delay: 0.4s;">{t('journal.coming')}</span>
+            </div>
+        </h1>
+
+        <div class="h-[1px] w-24 bg-white/10 mx-auto mb-12 opacity-0 animate-fade-in" style="animation-delay: 0.8s;"></div>
+
+        <p class="text-platinum/50 font-light text-sm md:text-base leading-relaxed max-w-lg mx-auto mb-16 opacity-0 animate-fade-up" style="animation-delay: 0.6s;" set:html={t('journal.desc')}>
+        </p>
+
+        <div class="opacity-0 animate-fade-up" style="animation-delay: 0.8s;">
+            <a href={`/${lang}/`} class="group relative inline-flex items-center gap-2 text-xs text-white border-b border-white/20 pb-2 hover:text-gold hover:border-gold transition-all uppercase tracking-widest">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+                </svg>
+                <span>{t('journal.back')}</span>
+            </a>
+        </div>
+
+    </div>
+
+  </section>
+
+</Layout>
+
+<style>
+  /* 1. REVEAL UP (Vyjetí textu) */
+  @keyframes revealUp {
+    from { transform: translateY(110%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* 2. BREATHING GOLD (Zlaté dýchání) */
+  @keyframes breathingGold {
+    0%, 100% { color: rgba(226, 226, 226, 0.5); text-shadow: none; }
+    50% { color: #C5A059; text-shadow: 0 0 20px rgba(197, 160, 89, 0.3); }
+  }
+
+  /* 3. FADE UP */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulseSlow {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+  }
+
+  .reveal-text {
+    opacity: 0;
+    transform: translateY(110%);
+    animation: revealUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .reveal-breathing-gold {
+    opacity: 0;
+    transform: translateY(110%);
+    animation: 
+        revealUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+        breathingGold 5s ease-in-out infinite 1.2s;
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1.5s ease-out forwards;
+  }
+
+  .animate-pulse-slow {
+      animation: pulseSlow 8s ease-in-out infinite;
+  }
+</style>

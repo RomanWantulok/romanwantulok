@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@theme {
+  --color-obsidian: #0A0A0A;
+  --color-carbon: #161616;
+  --color-platinum: #E6E6E6;
+  --color-tungsten: #9CA3AF;
+  --color-gold: #C5A059;
+  --color-graphite: #262626;
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+}
+
+@layer base {
+  /* Vypnutí kurzoru na úrovni celého dokumentu */
+  html, body {
+    @apply bg-obsidian text-platinum font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+
+  /* Vynucení skrytí systémové myši na PC */
+  @media (hover: hover) and (pointer: fine) {
+    html, body, a, button, input, .group {
+      cursor: none !important;
+    }
+  }
+}
+
+/* --- GLOBÁLNÍ ANIMACE --- */
+
+/* 1. Definice Keyframes */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slow-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 0.6; transform: scale(1); }
+}
+
+@keyframes shine {
+  /* Start: Startuje mnohem víc vlevo (-250%) */
+  0% { transform: translateX(-250%) skewX(-20deg); }
+  
+  /* Průběh: Dojede mnohem dál doprava (250%), takže zmizí úplně */
+  /* Změnil jsem časování na 30% ať má čas přejet celou tu delší dráhu */
+  30%, 100% { transform: translateX(250%) skewX(-20deg); }
+
+}
+
+/* 2. Třídy pro použití v HTML */
+.animate-fade-in-up {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 1.5s ease-out forwards;
+}
+
+.animate-slow-zoom {
+  animation: slow-zoom 20s linear infinite alternate;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 5s ease-in-out infinite;
+}
+
+.animate-shine {
+  animation: shine 8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* EFEKT ŠTĚTCE / ODHALENÍ */
+@keyframes brush-reveal {
+  0% { 
+    /* Začínáme s maskou posunutou tak, že logo není vidět */
+    -webkit-mask-position: 100% 0; 
+    mask-position: 100% 0; 
+    opacity: 0; /* Pro jistotu skryté */
+  }
+  1% {
+    opacity: 1; /* Hned zviditelníme kontejner, aby maska mohla pracovat */
+  }
+  100% { 
+    /* Končíme s maskou posunutou tak, že je logo vidět celé */
+    -webkit-mask-position: 0 0; 
+    mask-position: 0 0; 
+    opacity: 1;
+  }
+}
+
+.animate-brush {
+  /* Maska: Zleva černá (viditelné) -> doprava průhledná (neviditelné) */
+  /* Rozměr 200% nám umožní s tím hýbat */
+  -webkit-mask-image: linear-gradient(to right, black 50%, transparent 65%);
+  mask-image: linear-gradient(to right, black 50%, transparent 65%);
+  
+  -webkit-mask-size: 250% 100%;
+  mask-size: 250% 100%;
+  
+  /* Animace */
+  animation: brush-reveal 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}

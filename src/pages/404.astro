@@ -1,0 +1,28 @@
+---
+// Tento soubor slouží jako "Router" pro chyby.
+// Nemá layout, jen přesměrovává.
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Not Found</title>
+    <script is:inline>
+        // Získáme aktuální cestu
+        const path = window.location.pathname;
+        
+        // Zjistíme, jestli cesta začíná na /cs
+        const isCs = path.startsWith('/cs');
+
+        // Pokud je to česká cesta, pošleme na českou 404, jinak na anglickou
+        if (isCs) {
+            window.location.replace('/cs/404');
+        } else {
+            window.location.replace('/en/404');
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>

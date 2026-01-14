@@ -1,0 +1,311 @@
+---
+import Layout from '../../layouts/Layout.astro'; // Pozor na cestu ../..
+import Gallery from '../../components/Gallery.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+// TOTO PŘIDAT DO KAŽDÉHO SOUBORU:
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'cs' } },
+  ];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const ADMIN_EMAIL = "info@romanwantulok.com"; 
+---
+
+<Layout title="Admin Dashboard | RW Visuals">
+    <div id="loading-screen" class="fixed inset-0 bg-black z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="w-12 h-12 border-2 border-white/10 border-t-gold rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-gold text-xs uppercase tracking-[0.3em]">Verifying Access...</p>
+        </div>
+    </div>
+
+    <main class="min-h-screen bg-black text-platinum p-6 pt-32 hidden" id="admin-content">
+        
+        <div class="max-w-6xl mx-auto" data-admin-email={ADMIN_EMAIL} id="admin-data">
+            
+            <div class="flex items-center justify-between mb-12">
+                <div>
+                    <p class="text-red-500 text-xs uppercase tracking-[0.3em] font-bold mb-2">Restricted Area</p>
+                    <h1 class="text-4xl font-serif text-white italic">Control Center</h1>
+                </div>
+                <button id="logout-btn" class="text-xs border border-white/20 px-4 py-2 hover:bg-white/10 transition-colors cursor-pointer">
+                    LOGOUT
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-xl shadow-2xl h-fit">
+                    <h2 class="text-xl font-serif text-white mb-6">Upload Documents</h2>
+                    <form id="uploadForm" class="space-y-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Assign to Client</label>
+                            <select id="clientEmail" class="w-full bg-black/50 border border-white/10 p-3 text-white focus:border-gold outline-none cursor-pointer" required>
+                                <option value="" disabled selected>Loading clients...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">File Title</label>
+                            <input type="text" id="fileTitle" placeholder="Contract / Gallery / Invoice" class="w-full bg-black/50 border border-white/10 p-3 text-white focus:border-gold outline-none" required />
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Select File</label>
+                            <input type="file" id="fileInput" class="w-full text-xs text-white/70 file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20 transition-all cursor-pointer" required />
+                        </div>
+                        <button type="submit" id="upload-btn" class="w-full bg-gold text-black font-bold py-3 uppercase tracking-widest hover:bg-white transition-colors cursor-pointer">
+                            Upload
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white/5 border border-white/10 p-8 rounded-xl shadow-2xl h-fit">
+                    <h2 class="text-xl font-serif text-white mb-6">Project Status</h2>
+                    <form id="statusForm" class="space-y-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Client</label>
+                            <select id="statusEmail" class="w-full bg-black/50 border border-white/10 p-3 text-white focus:border-gold outline-none cursor-pointer" required>
+                                <option value="" disabled selected>Loading clients...</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Project Name</label>
+                                <input type="text" id="projectName" placeholder="e.g. Americká Síla" class="w-full bg-black/50 border border-white/10 p-3 text-white focus:border-gold outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Progress % (Optional)</label>
+                                <input type="number" id="progressPercent" placeholder="0-100" min="0" max="100" class="w-full bg-black/50 border border-white/10 p-3 text-white focus:border-gold outline-none" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Current Stage</label>
+                            <select id="projectStage" class="w-full bg-black/50 border border-white/10 p-3 text-white focus:border-gold outline-none cursor-pointer">
+                                <option value="booked">Booked</option>
+                                <option value="shooting">Shooting</option>
+                                <option value="editing">Editing</option>
+                                <option value="ready">Ready</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Delivery Estimate</label>
+                            <input type="text" id="deliveryEst" placeholder="e.g. 3 days" class="w-full bg-black/50 border border-white/10 p-3 text-white focus:border-gold outline-none" />
+                        </div>
+                        <button type="submit" id="update-status-btn" class="w-full border border-gold text-gold font-bold py-3 uppercase tracking-widest hover:bg-gold hover:text-black transition-colors cursor-pointer">
+                            Update Status
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white/5 border border-white/10 p-8 rounded-xl shadow-2xl h-fit lg:col-span-2">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-serif text-white">Client Feedback</h2>
+                        <button id="refresh-feedback" class="text-xs text-gold border border-gold/30 px-3 py-1 hover:bg-gold hover:text-black transition-colors cursor-pointer">Refresh</button>
+                    </div>
+                    <div id="feedback-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        <p class="text-white/30 text-center py-8">Loading feedback...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<script>
+    import { supabase } from "../../lib/supabaseClient";
+
+    const adminData = document.getElementById('admin-data');
+    const adminContent = document.getElementById('admin-content');
+    const loadingScreen = document.getElementById('loading-screen');
+    // @ts-ignore
+    const ADMIN_EMAIL = adminData ? adminData.dataset.adminEmail : null;
+
+    // --- AUTH LOGIC ---
+    window.addEventListener('load', async () => {
+        try {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) throw error;
+
+            if (!session || session.user.email !== ADMIN_EMAIL) {
+                console.warn("Unauthorized.");
+                window.location.href = "/client-access";
+            } else {
+                if (loadingScreen) loadingScreen.style.display = 'none';
+                if (adminContent) adminContent.classList.remove('hidden');
+                await loadClients();
+                await loadFeedback();
+            }
+        } catch (err) {
+            // @ts-ignore
+            if(window.showToast) window.showToast("Auth Error: " + err.message, "error");
+            setTimeout(() => window.location.href = "/client-access", 2000);
+        }
+    });
+
+    // --- LOAD CLIENTS ---
+    async function loadClients() {
+        const selectUpload = document.getElementById('clientEmail');
+        const selectStatus = document.getElementById('statusEmail');
+
+        const { data, error } = await supabase.from('profiles').select('email, full_name').order('created_at', { ascending: false });
+
+        if (error) {
+            // @ts-ignore
+            if(window.showToast) window.showToast("Failed to load clients", "error");
+            return;
+        }
+
+        const options = data && data.length > 0 
+            ? `<option value="" disabled selected>Select Client</option>` + data.map((c:any) => `<option value="${c.email}">${c.full_name || 'No Name'} (${c.email})</option>`).join('')
+            : `<option value="" disabled>No clients found</option>`;
+
+        if(selectUpload) selectUpload.innerHTML = options;
+        if(selectStatus) selectStatus.innerHTML = options;
+    }
+
+    // --- 1. UPLOAD ---
+    document.getElementById('uploadForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // @ts-ignore
+        const email = document.getElementById('clientEmail')?.value;
+        // @ts-ignore
+        const file = document.getElementById('fileInput')?.files[0];
+        // @ts-ignore
+        const title = document.getElementById('fileTitle')?.value;
+        const btn = document.getElementById('upload-btn');
+
+        if(!email || !file) {
+            // @ts-ignore
+            if(window.showToast) window.showToast("Select client & file", "error");
+            return;
+        }
+
+        if(btn) btn.innerText = "Uploading...";
+
+        try {
+            const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+            const { error: upErr } = await supabase.storage.from('documents').upload(fileName, file);
+            if(upErr) throw upErr;
+            
+            const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(fileName);
+            const { error: dbErr } = await supabase.from('user_files').insert([{ title, file_url: publicUrl, assigned_email: email }]);
+            if(dbErr) throw dbErr;
+
+            // @ts-ignore
+            if(window.showToast) window.showToast("Document Uploaded!", "success");
+            
+            // @ts-ignore
+            document.getElementById('fileTitle').value = "";
+            // @ts-ignore
+            document.getElementById('fileInput').value = "";
+
+        } catch (err) {
+            // @ts-ignore
+            if(window.showToast) window.showToast(err.message || "Failed", "error");
+        } finally {
+            if(btn) btn.innerText = "Upload";
+        }
+    });
+
+    // --- 2. STATUS ---
+    document.getElementById('statusForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // @ts-ignore
+        const email = document.getElementById('statusEmail')?.value;
+        // @ts-ignore
+        const project = document.getElementById('projectName')?.value;
+        // @ts-ignore
+        const status = document.getElementById('projectStage')?.value;
+        // @ts-ignore
+        const estimate = document.getElementById('deliveryEst')?.value;
+        // @ts-ignore
+        const progressVal = document.getElementById('progressPercent')?.value;
+        const progress = progressVal ? parseInt(progressVal) : null;
+        const btn = document.getElementById('update-status-btn');
+
+        if(!email) {
+            // @ts-ignore
+            if(window.showToast) window.showToast("Select a client", "error");
+            return;
+        }
+
+        if(btn) btn.innerText = "Updating...";
+
+        try {
+            const { data: existing, error: fetchErr } = await supabase.from('client_projects').select('id').eq('client_email', email).single();
+            if (fetchErr && fetchErr.code !== 'PGRST116') throw fetchErr;
+
+            const payload = { client_email: email, project_name: project, status: status, delivery_estimate: estimate, progress: progress };
+
+            let error;
+            if (existing) {
+                const { error: err } = await supabase.from('client_projects').update(payload).eq('client_email', email);
+                error = err;
+            } else {
+                const { error: err } = await supabase.from('client_projects').insert(payload);
+                error = err;
+            }
+
+            if(error) throw error;
+            // @ts-ignore
+            if(window.showToast) window.showToast("Status Updated!", "success");
+
+        } catch (err) {
+            // @ts-ignore
+            if(window.showToast) window.showToast(err.message || "Failed", "error");
+        } finally {
+            if(btn) btn.innerText = "Update Status";
+        }
+    });
+
+    // --- 3. FEEDBACK ---
+    async function loadFeedback() {
+        const list = document.getElementById('feedback-list');
+        if(!list) return;
+        
+        try {
+            const { data, error } = await supabase.from('client_feedback').select('*').order('created_at', { ascending: false });
+            if(error) throw error;
+
+            if(!data || data.length === 0) { list.innerHTML = `<p class="text-white/30 text-center py-8">No feedback yet.</p>`; return; }
+
+            list.innerHTML = "";
+            data.forEach((item: any) => {
+                let starsHTML = "";
+                for(let i=1; i<=5; i++) { starsHTML += i <= item.rating ? '<span class="text-gold text-lg">★</span>' : '<span class="text-white/10 text-lg">★</span>'; }
+                const html = `
+                    <div class="bg-black/40 border border-white/5 p-6 rounded hover:border-gold/30 transition-colors">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center text-gold font-bold">${item.client_email ? item.client_email[0].toUpperCase() : '?'}</div>
+                                <div><h4 class="text-white font-bold text-sm">${item.client_email || 'Anonymous'}</h4><span class="text-[10px] text-white/40">${new Date(item.created_at).toLocaleDateString()}</span></div>
+                            </div>
+                            <div class="tracking-widest">${starsHTML}</div>
+                        </div>
+                        <div class="bg-white/[0.02] p-3 rounded border border-white/5"><p class="text-platinum/80 text-sm italic">"${item.comment || 'No comment provided.'}"</p></div>
+                    </div>`;
+                list.innerHTML += html;
+            });
+        } catch (err) {
+            // @ts-ignore
+            if(window.showToast) window.showToast("Feedback error", "error");
+            list.innerHTML = `<p class="text-red-500 text-center">Error.</p>`;
+        }
+    }
+
+    document.getElementById('refresh-feedback')?.addEventListener('click', () => {
+        const btn = document.getElementById('refresh-feedback');
+        // @ts-ignore
+        if(btn) btn.innerText = "Loading...";
+        // @ts-ignore
+        loadFeedback().then(() => { if(btn) btn.innerText = "Refresh"; });
+    });
+
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/client-access";
+    });
+</script>

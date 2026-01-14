@@ -1,0 +1,169 @@
+---
+import Layout from "../../../layouts/Layout.astro"; // Cesta o 3 úrovně výš
+import { getLangFromUrl, useTranslations } from '../../../i18n/utils';
+
+// Nutné pro dynamické routování
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'cs' } },
+  ];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout title="Americká Síla | Roman Wantulok">
+    <main class="bg-black w-full text-platinum selection:bg-gold/30 selection:text-white">
+
+        <section class="sticky top-0 h-screen w-full flex flex-col items-center justify-center bg-obsidian z-10 border-b border-white/5">
+            <div class="absolute inset-0 z-0">
+                <div class="absolute inset-0 bg-black/50 z-10"></div>
+                
+                <img 
+                    src="/assets/images/americka-sila/hero.svg" 
+                    class="w-full h-full object-cover object-center animate-slow-zoom opacity-80" 
+                    alt="Dodge Challenger Front" 
+                />
+            </div>
+
+            <div class="relative z-20 text-center px-4 w-full">
+                <p class="text-gold text-xs uppercase tracking-[0.5em] mb-8 font-medium opacity-80 translate-3">{t('amsil.case')}</p>
+                
+                <img 
+                    src="/assets/images/americka-sila/collabss.svg" 
+                    alt="Roman Wantulok x Americká Síla" 
+                    class="w-[280px] md:w-[600px] h-auto mx-auto object-contain drop-shadow-2xl animate-fade-in-up" 
+                />
+
+                <div class="mt-16 animate-bounce">
+                    <p class="text-white/70 text-[10px] md:text-xs uppercase tracking-[0.3em] translate-3">
+                        {t('amsil.scroll')}
+                    </p>
+                    <svg class="w-6 h-6 text-gold mx-auto mt-4 opacity-60 translate-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </div>
+            </div>
+        </section>
+
+        <section class="sticky top-0 h-screen w-full flex items-center bg-obsidian z-20 shadow-[0_-50px_100px_rgba(0,0,0,0.8)]">
+            <div class="max-w-[1800px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center h-full">
+                
+                <div class="order-2 md:order-1 flex flex-col justify-center h-full py-20 md:py-0">
+                    <div class="w-12 h-[2px] bg-gold mb-8"></div>
+                    <h2 class="text-4xl md:text-6xl font-serif text-white mb-8 leading-tight">
+                        {t('amsil.title_pre')} <span class="text-gold italic">{t('amsil.title_accent')}</span> {t('amsil.title_post')}
+                    </h2>
+                    <p class="text-platinum/70 font-light leading-relaxed text-lg mb-8 max-w-xl">
+                        {t('amsil.desc1')}
+                    </p>
+                    <p class="text-platinum/70 font-light leading-relaxed text-lg max-w-xl">
+                        {t('amsil.desc2')}
+                    </p>
+                    
+                    <div class="mt-12 grid grid-cols-2 gap-8 border-t border-white/10 pt-8">
+                        <div>
+                            <span class="block text-[10px] uppercase tracking-widest text-gold mb-2">{t('amsil.machine')}</span>
+                            <span class="text-white font-serif text-xl">Challenger 6.4L V8 SRT</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] uppercase tracking-widest text-gold mb-2">{t('amsil.loc_label')}</span>
+                            <span class="text-white font-serif text-xl">{t('amsil.loc_val')}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-1 md:order-2 h-[50vh] md:h-full w-full overflow-hidden relative group rounded-lg md:rounded-none">
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700 z-10"></div>
+                    <img src="/assets/images/americka-sila/story.webp" class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" alt="Challenger on open road" />
+                </div>
+            </div>
+        </section>
+
+        <section class="sticky top-0 h-screen w-full flex items-center justify-center bg-black z-30 shadow-[0_-50px_100px_rgba(0,0,0,0.8)]">
+            <div class="relative w-full h-full group">
+                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-700 z-10"></div>
+                <img src="/assets/images/americka-sila/wide.webp" class="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" alt="Challenger wide aggressive shot" />
+                
+                <div class="absolute bottom-12 left-6 md:left-12 z-20 mix-blend-overlay">
+                    <h3 class="text-[18vw] md:text-[12vw] font-serif text-transparent stroke-text opacity-40 leading-none uppercase tracking-tighter">
+                        {t('amsil.dominance')}
+                    </h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="sticky top-0 min-h-screen w-full bg-obsidian z-40 shadow-[0_-50px_100px_rgba(0,0,0,0.8)] flex flex-col justify-center py-20">
+            <div class="max-w-[1800px] mx-auto px-6 w-full h-full flex flex-col justify-between">
+                
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/10 pb-6">
+                    <div>
+                        <p class="text-gold text-[10px] uppercase tracking-[0.4em] mb-2">{t('amsil.finer')}</p>
+                        <h2 class="text-4xl font-serif text-white italic">{t('amsil.anatomy')}</h2>
+                    </div>
+                    <span class="text-white/40 text-xs uppercase tracking-[0.2em] mt-4 md:mt-0">{t('amsil.figs')}</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-auto md:h-[60vh] mb-20">
+                    
+                    <div class="relative group overflow-hidden rounded-lg">
+                        <img src="/assets/images/americka-sila/detail-wheel.webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="SRT Wheel Detail" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
+                        <div class="absolute bottom-6 left-6 right-6 border-t border-gold/50 pt-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                             <span class="block text-[10px] text-gold uppercase tracking-widest mb-1">{t('amsil.fig1')}</span>
+                             <span class="text-xl font-serif text-white">{t('amsil.fig1_t')}</span>
+                        </div>
+                    </div>
+
+                    <div class="relative group overflow-hidden rounded-lg md:-mt-12 md:mb-12">
+                        <img src="/assets/images/americka-sila/detail-interior.webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="SRT Interior Cockpit" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
+                         <div class="absolute bottom-6 left-6 right-6 border-t border-gold/50 pt-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                             <span class="block text-[10px] text-gold uppercase tracking-widest mb-1">{t('amsil.fig2')}</span>
+                             <span class="text-xl font-serif text-white">{t('amsil.fig2_t')}</span>
+                        </div>
+                    </div>
+
+                    <div class="relative group overflow-hidden rounded-lg">
+                        <img src="/assets/images/americka-sila/detail-rear.webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Challenger Rear Lights" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
+                         <div class="absolute bottom-6 left-6 right-6 border-t border-gold/50 pt-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                             <span class="block text-[10px] text-gold uppercase tracking-widest mb-1">{t('amsil.fig3')}</span>
+                             <span class="text-xl font-serif text-white">{t('amsil.fig3_t')}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center border-t border-white/5 pt-20">
+                     <p class="text-white/40 text-xs uppercase tracking-[0.4em] mb-8">{t('amsil.ready')}</p>
+                    <a href={`/${lang}/contact`} class="group relative inline-flex items-center justify-center overflow-hidden px-12 py-6 border border-gold/30 hover:border-gold transition-colors duration-500">
+                        <span class="absolute inset-0 bg-gold/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
+                        <span class="relative font-serif text-2xl text-white group-hover:text-gold transition-colors duration-300 italic">{t('amsil.inquire')}</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</Layout>
+
+<style>
+    .stroke-text {
+        -webkit-text-stroke: 2px rgba(255, 255, 255, 0.3);
+        color: transparent;
+    }
+    
+    main::-webkit-scrollbar {
+        width: 6px;
+    }
+    main::-webkit-scrollbar-track {
+        background: #0a0a0a;
+    }
+    main::-webkit-scrollbar-thumb {
+        background: rgba(197, 160, 89, 0.3);
+        border-radius: 10px;
+    }
+    main::-webkit-scrollbar-thumb:hover {
+        background: rgba(197, 160, 89, 0.6);
+    }
+</style>

@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro'; // Pozor na cestu ../..
+import Gallery from '../../components/Gallery.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+// TOTO PŘIDAT DO KAŽDÉHO SOUBORU:
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'cs' } },
+  ];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout title="Collaborations | Roman Wantulok">
+    <main class="bg-obsidian min-h-screen w-full text-platinum pt-32 pb-20">
+        
+        <section class="px-6 max-w-[1800px] mx-auto mb-24">
+            <div class="border-l border-gold/30 pl-8 opacity-0 animate-fade-in-up">
+                <p class="text-gold text-[10px] uppercase tracking-[0.5em] mb-4">{t('collabs.sub')}</p>
+                <h1 class="font-serif text-5xl md:text-8xl text-white italic">
+                    {t('collabs.title')} <br/> <span class="text-white/20 not-italic font-sans tracking-tight">{t('collabs.title_span')}</span>
+                </h1>
+            </div>
+        </section>
+
+        <section class="px-6 max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+            
+            <a href="/cs/collabs/americka-sila" class="group block cursor-none">
+                <div class="relative overflow-hidden aspect-[4/3] mb-8">
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all duration-700 z-10"></div>
+                    
+                    <img 
+                        src="/assets/images/DSC03781.webp" 
+                        alt="Americká Síla x Roman Wantulok" 
+                        class="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105 transition-all duration-1000 ease-out"
+                    />
+                    
+                    <div class="absolute bottom-8 right-8 z-20 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                        <span class="bg-white text-obsidian px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-bold">{t('collabs.view')}</span>
+                    </div>
+                </div>
+
+                <div class="flex items-baseline justify-between border-b border-white/10 pb-4 group-hover:border-gold/50 transition-colors duration-500">
+                    <div>
+                        <h2 class="text-3xl font-serif italic text-white group-hover:text-gold transition-colors duration-300">Americká Síla × RW Visuals</h2>
+                        <p class="text-white/40 text-[10px] uppercase tracking-[0.2em] mt-2">Dodge Challenger SRT</p>
+                    </div>
+                    <span class="text-4xl font-thin text-white/10">01</span>
+                </div>
+            </a>
+
+            <div class="block opacity-60">
+                <div class="relative overflow-hidden aspect-[4/3] mb-8 bg-white/[0.02] border border-white/5 flex flex-col items-center justify-center text-center p-12">
+                    <p class="font-serif text-2xl text-white/20 italic mb-4">"The next story is being written."</p>
+                    <span class="text-gold/30 text-[10px] uppercase tracking-[0.2em] border border-gold/10 px-4 py-2">{t('collabs.coming')}</span>
+                </div>
+
+                <div class="flex items-baseline justify-between border-b border-white/5 pb-4">
+                    <div>
+                        <h2 class="text-3xl font-serif text-white/20">{t('collabs.future')}</h2>
+                        <p class="text-white/10 text-[10px] uppercase tracking-[0.2em] mt-2">{t('collabs.dev')}</p>
+                    </div>
+                    <span class="text-4xl font-thin text-white/5">02</span>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+</Layout>
