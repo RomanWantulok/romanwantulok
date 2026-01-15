@@ -1,3 +1,12 @@
 ---
-return Astro.redirect('/en');
+// Získáme preferovaný jazyk prohlížeče
+const acceptLang = Astro.request.headers.get('accept-language') || 'cs';
+
+// Pokud jazyk začíná na 'en', pošleme ho na angličtinu
+if (acceptLang.toLowerCase().startsWith('en')) {
+  return Astro.redirect('/en/');
+}
+
+// Všem ostatním ukážeme češtinu
+return Astro.redirect('/cs/');
 ---

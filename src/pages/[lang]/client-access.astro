@@ -47,9 +47,10 @@ const t = useTranslations(lang);
                             <label for="loginPassword" class="absolute left-4 top-2 text-[10px] text-white/40 uppercase tracking-widest transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-white/30 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gold pointer-events-none">{t('client.pass_placeholder')}</label>
                         </div>
                     </div>
-                    <button type="submit" class="group relative w-full bg-gold text-black font-bold py-4 text-xs uppercase tracking-[0.2em] hover:bg-white transition-all duration-300 mt-2 overflow-hidden cursor-pointer">
+                    <button type="submit" class="group relative w-full bg-gold text-black font-bold py-4 text-xs uppercase tracking-[0.2em] hover:bg-white transition-all duration-300 mt-2 overflow-hidden cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                         <span class="relative z-10 flex items-center justify-center">
                             <span class="btn-text">{t('client.login_btn')}</span>
+                            <svg class="loading-spinner hidden animate-spin ml-2 h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         </span>
                     </button>
                     <div class="text-center pt-2">
@@ -72,9 +73,10 @@ const t = useTranslations(lang);
                             <label for="regPassword" class="absolute left-4 top-2 text-[10px] text-white/40 uppercase tracking-widest transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-white/30 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gold pointer-events-none">Create Password</label>
                         </div>
                     </div>
-                    <button type="submit" class="group relative w-full bg-white text-black font-bold py-4 text-xs uppercase tracking-[0.2em] hover:bg-gold transition-all duration-300 mt-2 overflow-hidden cursor-pointer">
+                    <button type="submit" class="group relative w-full bg-white text-black font-bold py-4 text-xs uppercase tracking-[0.2em] hover:bg-gold transition-all duration-300 mt-2 overflow-hidden cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                         <span class="relative z-10 flex items-center justify-center gap-2">
                             <span class="btn-text">{t('client.signup')}</span>
+                            <svg class="loading-spinner hidden animate-spin ml-2 h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         </span>
                     </button>
                     <div class="text-center pt-2">
@@ -251,11 +253,11 @@ const t = useTranslations(lang);
             const textSpan = btn.querySelector('.btn-text');
             const spinner = btn.querySelector('.loading-spinner');
             if(isLoading) {
-                if(textSpan) textSpan.classList.add('opacity-0');
+                if(textSpan) textSpan.classList.add('hidden');
                 if(spinner) spinner.classList.remove('hidden');
                 btn.disabled = true;
             } else {
-                if(textSpan) textSpan.classList.remove('opacity-0');
+                if(textSpan) textSpan.classList.remove('hidden');
                 if(spinner) spinner.classList.add('hidden');
                 btn.disabled = false;
             }
@@ -275,17 +277,31 @@ const t = useTranslations(lang);
             } else { showDashboard(data.user); }
         });
 
+        // TADY JE TA OPRAVENÁ REGISTRACE (Spam protection + Česká hláška)
         registerForm?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = registerForm.querySelector('button');
-            setLoading(btn, true);
+            setLoading(btn, true); // Zablokuje tlačítko
+            if(errorMsg) errorMsg.classList.add('hidden'); // Skryje staré chyby
+
             const name = (document.getElementById('regName') as HTMLInputElement).value;
             const email = (document.getElementById('regEmail') as HTMLInputElement).value;
             const password = (document.getElementById('regPassword') as HTMLInputElement).value;
+            
             const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name } } });
+            
             if (error) {
-                if(errorMsg) { errorMsg.innerText = error.message; errorMsg.classList.remove('hidden'); }
-                setLoading(btn, false);
+                // TADY CHYTÁME "Already registered"
+                let msg = error.message;
+                if (error.message.includes("already registered") || error.status === 422 || error.status === 400) {
+                     msg = "Tento e-mail už u nás evidujeme. Pokud si myslíte, že nejste registrovaní, zkontrolujte si prosím e-mail (i složku Spam) nebo zkuste obnovit heslo.";
+                }
+
+                if(errorMsg) { 
+                    errorMsg.innerText = msg; 
+                    errorMsg.classList.remove('hidden'); 
+                }
+                setLoading(btn, false); // Odblokujeme, aby to mohli opravit
             } else {
                 if (data.user && !data.session) {
                     registerForm.classList.add('hidden');
@@ -329,14 +345,12 @@ const t = useTranslations(lang);
             const { data, error } = await supabase.from('client_projects').select('*').eq('client_email', email).single();
             const steps = ['booked', 'shooting', 'editing', 'ready'];
 
-            // Zde je klíčová změna: Pokud není projekt, skryj kartu a ukaž zprávu
             if (error || !data) {
                 projectStatusCard?.classList.add('hidden');
                 noProjectMsg?.classList.remove('hidden');
                 return;
             }
 
-            // Pokud je projekt, ukaž kartu a skryj zprávu
             projectStatusCard?.classList.remove('hidden');
             noProjectMsg?.classList.add('hidden');
             

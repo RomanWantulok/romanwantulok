@@ -4,8 +4,12 @@ import tailwindcss from '@tailwindcss/vite';
 
 import cloudflare from "@astrojs/cloudflare";
 
+import sitemap from "@astrojs/sitemap";
+
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://romanwantulok.com',
+
   vite: {
     plugins: [tailwindcss()]
   },
@@ -20,7 +24,9 @@ export default defineConfig({
     }
   },
 
-  output: 'server', // Důležité pro Supabase a dynamické cesty
-  adapter: cloudflare()
-  
+  // Důležité pro Supabase a dynamické cesty
+  output: 'server',
+
+  adapter: cloudflare(),
+  integrations: [sitemap()]
 });

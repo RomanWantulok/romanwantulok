@@ -24,7 +24,7 @@ const links = [
 ];
 ---
 
-<header id="main-header" class="fixed top-0 w-full z-50 transition-all duration-500 border-b border-transparent">
+<header id="main-header" class="fixed top-0 w-full z-[100] transition-all duration-500 border-b border-transparent">
   <div class="max-w-[1500px] mx-auto px-6 h-20 flex items-center justify-between">
     
     <a href={getLocalizedPath('/', lang)} class="text-xl font-sans font-bold tracking-widest text-platinum uppercase z-50">
@@ -61,24 +61,27 @@ const links = [
       </svg>
     </button>
   </div>
-
-  <div id="mobile-menu" class="fixed inset-0 bg-obsidian flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-500">
-    {links.map((link) => (
-      <a href={link.href} class="text-2xl font-serif text-platinum hover:text-gold italic">
-        {link.name}
-      </a>
-    ))}
-    
-    <a href={getLocalizedPath('/client-access', lang)} class="mt-4 text-xl font-serif text-gold italic border-b border-gold/30 pb-1">
-        {t('nav.client')}
-    </a>
-
-    <div class="flex items-center gap-6 mt-8 text-sm font-sans uppercase tracking-[0.3em]">
-        <a href={enPath} class={`lang-switch py-4 ${lang === 'en' ? 'text-gold' : 'text-platinum/40'}`} data-lang="en">English</a>
-        <a href={csPath} class={`lang-switch py-4 ${lang === 'cs' ? 'text-gold' : 'text-platinum/40'}`} data-lang="cs">Česky</a>
-    </div>
-  </div>
 </header>
+
+<div 
+  id="mobile-menu" 
+  class="fixed inset-0 z-[90] bg-black flex flex-col items-center justify-start pt-32 gap-8 opacity-0 pointer-events-none transition-opacity duration-500 md:hidden overflow-y-auto pb-10"
+>
+  {links.map((link) => (
+    <a href={link.href} class="text-2xl font-serif text-platinum hover:text-gold italic">
+      {link.name}
+    </a>
+  ))}
+  
+  <a href={getLocalizedPath('/client-access', lang)} class="mt-4 text-xl font-serif text-gold italic border-b border-gold/30 pb-1">
+      {t('nav.client')}
+  </a>
+
+  <div class="flex items-center gap-6 mt-8 text-sm font-sans uppercase tracking-[0.3em]">
+      <a href={enPath} class={`lang-switch py-4 ${lang === 'en' ? 'text-gold' : 'text-platinum/40'}`} data-lang="en">English</a>
+      <a href={csPath} class={`lang-switch py-4 ${lang === 'cs' ? 'text-gold' : 'text-platinum/40'}`} data-lang="cs">Česky</a>
+  </div>
+</div>
 
 <script>
   const header = document.getElementById('main-header');
